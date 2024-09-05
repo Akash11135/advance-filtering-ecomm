@@ -10,16 +10,19 @@
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.4.2",
+    "@aws-sdk/client-s3": "^3.645.0",
     "axios": "^1.7.7",
     "body-parser": "^1.20.2",
     "git-filter-repo": "^0.0.30",
+    "mime-types": "^2.1.35",
     "mongodb": "^6.8.0",
     "mongoose": "^8.6.1",
     "multiparty": "^4.2.3",
     "next": "14.2.7",
     "next-auth": "^4.24.7",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-spinners": "^0.14.1"
   },
   "devDependencies": {
     "eslint": "^8",
