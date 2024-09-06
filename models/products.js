@@ -1,5 +1,5 @@
 import { model, models, mongoose, Schema } from "mongoose";
-
+import { Category } from "./Category";
 const ProductSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -11,6 +11,10 @@ const ProductSchema = new mongoose.Schema({
     required: true,
   },
   images: [{ type: String }],
+  category: {
+    type: mongoose.Types.ObjectId,
+    ref: "Category",
+  },
 });
 
 export const Product = models.Product || model("Product", ProductSchema);

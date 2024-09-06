@@ -1,12 +1,15 @@
 import Layout from "@/components/Layout";
 import axios from "axios";
+import { withSwal } from "react-sweetalert2";
 
 import { useEffect, useState } from "react";
 
-export default function Category({ name: existingCategoryName }) {
-  const [name, setName] = useState(existingCategoryName || "");
+function Category({ swal }) {
+  const [name, setName] = useState("");
   const [parentCategory, setParentCategory] = useState();
   const [categories, setCategories] = useState([]);
+  const [editCategory, setEditCategory] = useState(null);
+
   useEffect(() => {
     fetchCategory();
   }, []);
@@ -20,18 +23,62 @@ export default function Category({ name: existingCategoryName }) {
   const saveCategory = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("/api/categories", { name, parentCategory });
-      setName("");
+      if (editCategory) {
+        const _id = editCategory?._id;
+        await axios.put("/api/categories", {
+          _id,
+          name,
+          parentCategory,
+        });
+        setEditCategory(null);
+        setName("");
+        setParentCategory();
+      } else {
+        await axios.post("/api/categories", { name, parentCategory });
+        setName("");
+      }
+
       fetchCategory();
     } catch (err) {
       console.log(err);
     }
   };
 
+  const handleEdit = (category) => {
+    setEditCategory(category);
+    setName(category.name);
+    setParentCategory(category.parent?._id);
+  };
+
+  const handleDelete = async (category) => {
+    swal
+      .fire({
+        title: "Are you sure?",
+        text: `do you want to delete ${category?.name}`,
+        showCancelButton: true,
+        cancelButtonText: "Cancel",
+        confirmButtonText: "Yes, Delete",
+        reverseButtons: true,
+        confirmButtonColor: "#d55",
+      })
+      .then(async (result) => {
+        // when confirmed and promise resolved==>isConfired:true/false...
+        if (result.isConfirmed) {
+          const { _id } = category;
+          await axios.delete("/api/categories?_id=" + _id);
+          fetchCategory();
+        }
+      });
+  };
+
   return (
     <Layout>
       <h1>Categories</h1>
-      <label>New Category Name</label>
+      <label>
+        {editCategory
+          ? `Edit category ${editCategory.name}`
+          : "Create New Category."}
+      </label>
       <form className="flex gap-2" onSubmit={saveCategory}>
         <input
           type="text"
@@ -60,6 +107,7 @@ export default function Category({ name: existingCategoryName }) {
           <tr>
             <td>Category Name</td>
             <td>Parent Category Name</td>
+            <td></td>
           </tr>
         </thead>
         <tbody>
@@ -68,6 +116,20 @@ export default function Category({ name: existingCategoryName }) {
               <tr key={categories._id}>
                 <td>{category.name}</td>
                 <td>{category?.parent?.name}</td>
+                <td>
+                  <button
+                    onClick={() => handleEdit(category)}
+                    className="btn-primary mr-1"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDelete(category)}
+                    className="btn-primary"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
         </tbody>
@@ -75,3 +137,7 @@ export default function Category({ name: existingCategoryName }) {
     </Layout>
   );
 }
+
+export default withSwal(({ swal }, ref) => {
+  return <Category swal={swal} />;
+});

@@ -8,13 +8,14 @@ export default async function handle(req, res) {
   mongooseConnect();
   //add a product
   if (method === "POST") {
-    const { title, description, price, images } = req.body;
+    const { title, description, price, images, categoryName } = req.body;
 
     Product.create({
       title,
       description,
       price,
       images,
+      category: categoryName,
     });
     res.json(req.body);
   }
@@ -29,9 +30,12 @@ export default async function handle(req, res) {
   }
 
   if (method === "PUT") {
-    const { title, description, price, _id, images } = req.body;
-    console.log("images", { images });
-    await Product.updateOne({ _id }, { title, description, price, images });
+    const { title, description, price, _id, images, categoryName } = req.body;
+
+    await Product.updateOne(
+      { _id },
+      { title, description, price, images, category: categoryName }
+    );
     res.status(200).json(true);
   }
 

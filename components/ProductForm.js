@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import axios from "axios";
 import Spinners from "./Spinners";
@@ -10,18 +10,25 @@ export default function ProductForm({
   description: existingDescription,
   price: existingPrice,
   images: existingImages,
+  category: existingCategory,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
   const [price, setPrice] = useState(existingPrice || 0);
   const [goToProducts, setGoToProducts] = useState(false);
   const [images, setImages] = useState(existingImages || []);
+  const [categories, setCategories] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [categoryName, setCategoryName] = useState(existingCategory || "");
   const router = useRouter();
+
+  useEffect(() => {
+    axios.get("/api/categories").then((res) => setCategories(res.data));
+  }, []);
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const data = { title, description, price, images };
+    const data = { title, description, price, images, categoryName };
     if (_id) {
       //update product
 
@@ -30,6 +37,7 @@ export default function ProductForm({
       //add new product
       await axios.post("/api/products", data);
     }
+
     setGoToProducts(true);
   };
 
@@ -61,6 +69,20 @@ export default function ProductForm({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
       />
+      <label>Categories</label>
+      <select
+        className="p-1"
+        value={categoryName}
+        onChange={(ev) => setCategoryName(ev.target?.value)}
+      >
+        <option value="">Uncategorised</option>
+        {categories?.length > 0 &&
+          categories.map((category) => (
+            <option value={category._id} key={category._id}>
+              {category.name}
+            </option>
+          ))}
+      </select>
       <label>Photos</label>
       <div className="mb-2 flex gap-2 flex-wrap ">
         {!!images?.length &&
