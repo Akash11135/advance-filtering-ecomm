@@ -8,11 +8,12 @@ export default async function handler(req, res) {
 
   try {
     if (method === "POST") {
-      const { name, parentCategory } = req.body;
+      const { name, parentCategory, properties } = req.body;
 
       const newCategory = await Category.create({
         name,
-        parent: parentCategory,
+        parent: parentCategory || undefined,
+        properties,
       });
 
       res.status(200).json(newCategory);
@@ -23,11 +24,11 @@ export default async function handler(req, res) {
     }
 
     if (method === "PUT") {
-      const { _id, name, parentCategory } = req.body;
+      const { _id, name, parentCategory, properties } = req.body;
       // res.status(200).json({ _id, name, parentCategory });
       const user = await Category.updateOne(
         { _id },
-        { name, parent: parentCategory }
+        { name, parent: parentCategory || undefined, properties }
       );
       if (user) {
         res.status(200).json(user);
