@@ -11,7 +11,7 @@ export default function Layout({ children }) {
 
   if (!session) {
     return (
-      <div className="bg-blue-900 w-screen h-screen flex items-center">
+      <div className="bg-bgGray w-screen h-screen flex items-center">
         <div className=" text-center w-full">
           <button
             onClick={() => signIn("google")}
@@ -24,7 +24,7 @@ export default function Layout({ children }) {
     );
   }
   return (
-    <div className="bg-blue-900 min-h-screen flex">
+    <div className="bg-bgGray min-h-screen flex">
       <Nav />
       <div className="bg-white text-black flex-grow m-2 ml-0 rounded-lg p-2">
         {children}

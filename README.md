@@ -41,3 +41,6 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 //important liberaries for project
 react-sweetAlert2 is available for popups
+
+//errors to resolve---on selected button Ucategorised management.
+//Rose Gold gives error.

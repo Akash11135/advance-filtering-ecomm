@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import axios from "axios";
 import Spinners from "./Spinners";
+import { set } from "mongoose";
 
 export default function ProductForm({
   _id, //flow of componetnts in next.js
@@ -20,6 +21,7 @@ export default function ProductForm({
   const [categories, setCategories] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [categoryName, setCategoryName] = useState(existingCategory || "");
+
   const router = useRouter();
 
   useEffect(() => {
@@ -28,7 +30,13 @@ export default function ProductForm({
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const data = { title, description, price, images, categoryName };
+    const data = {
+      title,
+      description,
+      price,
+      images,
+      categoryName,
+    };
     if (_id) {
       //update product
 
@@ -60,6 +68,15 @@ export default function ProductForm({
       setIsUploading(false);
     }
   }
+  let categoryArr;
+  if (categories) {
+    categoryArr = categories.filter((category) => {
+      if (category._id === categoryName) {
+        return category;
+      }
+    });
+  }
+  // console.log(categoryArr);
   return (
     <form onSubmit={handleSave}>
       <label>Product Name</label>
@@ -118,6 +135,28 @@ export default function ProductForm({
         </label>
         <div className="flex items-center justify-center">
           {images?.length <= 0 ? <div>No photos in this product.</div> : null}
+        </div>
+      </div>
+      <div className="mt-2 mb-2">
+        <label>Properties</label>
+        <div className="mt-1">
+          {categoryArr?.length > 0 &&
+            categoryArr.map((category) =>
+              category?.properties?.map((p) => (
+                <div className="flex gap-3 justify-center items-center">
+                  <h2 className="w-[10%]">{p.name} : </h2>
+                  <select>
+                    {typeof p?.value === "string"
+                      ? p.value
+                          ?.split(",")
+                          .map((v) => <option value={v}>{v}</option>)
+                      : p.value.map((v) => {
+                          v;
+                        })}
+                  </select>
+                </div>
+              ))
+            )}
         </div>
       </div>
       <label>Product Description</label>

@@ -1,12 +1,11 @@
 import Layout from "@/components/Layout";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const Home = () => {
   const { data: session } = useSession();
 
   return (
     <Layout>
-      <button onClick={() => signOut("google")}>Sign Out</button>
       <div className="flex justify-between items-center">
         <h2>
           Hello, <b>{session?.user?.name}</b>

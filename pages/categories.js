@@ -188,6 +188,7 @@ function Category({ swal }) {
               setEditCategory(null);
               setName("");
               setParentCategory("");
+              setProperties(null);
             }}
             type="button"
             className="btn-default ml-2"
