@@ -221,7 +221,7 @@ function Category({ swal }) {
                     </button>
                     <button
                       onClick={() => handleDelete(category)}
-                      className="btn-primary"
+                      className="btn-red ml-1"
                     >
                       Delete
                     </button>

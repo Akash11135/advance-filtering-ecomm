@@ -76,7 +76,7 @@ export default function ProductForm({
       }
     });
   }
-  // console.log(categoryArr);
+
   return (
     <form onSubmit={handleSave}>
       <label>Product Name</label>
@@ -143,16 +143,24 @@ export default function ProductForm({
           {categoryArr?.length > 0 &&
             categoryArr.map((category) =>
               category?.properties?.map((p) => (
-                <div className="flex gap-3 justify-center items-center">
-                  <h2 className="w-[10%]">{p.name} : </h2>
+                <div
+                  key={Math.random()}
+                  className="flex gap-3 justify-center items-center"
+                >
+                  <h2 className="w-[10%]">{p?.name} :</h2>
                   <select>
-                    {typeof p?.value === "string"
-                      ? p.value
-                          ?.split(",")
-                          .map((v) => <option value={v}>{v}</option>)
-                      : p.value.map((v) => {
-                          v;
-                        })}
+                    <>
+                      <option value={0}>None</option>
+                      {typeof p?.value === "string"
+                        ? p.value?.split(",").map((v) => (
+                            <option key={Math.random()} value={v}>
+                              {v}
+                            </option>
+                          ))
+                        : p.value.map((v) => {
+                            return <option key={Math.random()}>{v}</option>;
+                          })}
+                    </>
                   </select>
                 </div>
               ))
