@@ -11,11 +11,11 @@ export default function Layout({ children }) {
 
   if (!session) {
     return (
-      <div className="bg-bgGray w-screen h-screen flex items-center">
+      <div className="bg-blue-400 w-screen h-screen flex items-center">
         <div className=" text-center w-full">
           <button
             onClick={() => signIn("google")}
-            className="bg-white text-black p-2 rounded-sm"
+            className="bg-white text-black p-2 rounded-lg"
           >
             Login with google
           </button>

@@ -6,9 +6,10 @@ import { mongooseConnect } from "@/lib/mongoose";
 export default async function handle(req, res) {
   const { method } = req;
   mongooseConnect();
-  //add a product
+
   if (method === "POST") {
-    const { title, description, price, images, categoryName } = req.body;
+    const { title, description, price, images, categoryName, properties } =
+      req.body;
 
     Product.create({
       title,
@@ -16,6 +17,7 @@ export default async function handle(req, res) {
       price,
       images,
       category: categoryName,
+      properties,
     });
     res.json(req.body);
   }
@@ -30,11 +32,12 @@ export default async function handle(req, res) {
   }
 
   if (method === "PUT") {
-    const { title, description, price, _id, images, categoryName } = req.body;
+    const { title, description, price, _id, images, categoryName, properties } =
+      req.body;
 
     await Product.updateOne(
       { _id },
-      { title, description, price, images, category: categoryName }
+      { title, description, price, images, category: categoryName, properties }
     );
     res.status(200).json(true);
   }

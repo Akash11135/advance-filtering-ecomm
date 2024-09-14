@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import Layout from "./Layout";
 import axios from "axios";
 import Spinners from "./Spinners";
-import { set } from "mongoose";
 
 export default function ProductForm({
   _id, //flow of componetnts in next.js
@@ -12,6 +11,7 @@ export default function ProductForm({
   price: existingPrice,
   images: existingImages,
   category: existingCategory,
+  properties: existingProperties,
 }) {
   const [title, setTitle] = useState(existingTitle || "");
   const [description, setDescription] = useState(existingDescription || "");
@@ -21,7 +21,9 @@ export default function ProductForm({
   const [categories, setCategories] = useState([]);
   const [isUploading, setIsUploading] = useState(false);
   const [categoryName, setCategoryName] = useState(existingCategory || "");
-
+  const [productProperties, setProductProperties] = useState(
+    existingProperties || {}
+  );
   const router = useRouter();
 
   useEffect(() => {
@@ -36,6 +38,7 @@ export default function ProductForm({
       price,
       images,
       categoryName,
+      properties: productProperties,
     };
     if (_id) {
       //update product
@@ -68,14 +71,24 @@ export default function ProductForm({
       setIsUploading(false);
     }
   }
-  let categoryArr;
+
+  let productProp;
   if (categories) {
-    categoryArr = categories.filter((category) => {
-      if (category._id === categoryName) {
-        return category;
+    categories.map((c) => {
+      if (c._id === categoryName) {
+        productProp = c?.properties;
       }
     });
   }
+
+  const handleChange = (name, value) => {
+    setProductProperties((prev) => {
+      const newProductProps = { ...prev };
+      newProductProps[name] = value;
+      return newProductProps;
+    });
+    console.log(productProperties);
+  };
 
   return (
     <form onSubmit={handleSave}>
@@ -93,6 +106,7 @@ export default function ProductForm({
         onChange={(ev) => setCategoryName(ev.target?.value)}
       >
         <option value="">Uncategorised</option>
+
         {categories?.length > 0 &&
           categories.map((category) => (
             <option value={category._id} key={category._id}>
@@ -139,33 +153,24 @@ export default function ProductForm({
       </div>
       <div className="mt-2 mb-2">
         <label>Properties</label>
-        <div className="mt-1">
-          {categoryArr?.length > 0 &&
-            categoryArr.map((category) =>
-              category?.properties?.map((p) => (
-                <div
-                  key={Math.random()}
-                  className="flex gap-3 justify-center items-center"
-                >
-                  <h2 className="w-[10%]">{p?.name} :</h2>
-                  <select>
-                    <>
-                      <option value={0}>None</option>
-                      {typeof p?.value === "string"
-                        ? p.value?.split(",").map((v) => (
-                            <option key={Math.random()} value={v}>
-                              {v}
-                            </option>
-                          ))
-                        : p.value.map((v) => {
-                            return <option key={Math.random()}>{v}</option>;
-                          })}
-                    </>
-                  </select>
-                </div>
-              ))
-            )}
-        </div>
+        {productProp?.map((prop) => (
+          <>
+            <div key={Math.random()}>{prop?.name}</div>
+            <select
+              onChange={(ev) => handleChange(prop.name, ev.target.value)}
+              value={productProperties[prop.name]}
+            >
+              <option value={0}>None</option>
+              {typeof prop?.value === "string"
+                ? prop.value?.split(",")?.map((v) => (
+                    <option key={10 * Math.random()} value={v}>
+                      {v}
+                    </option>
+                  ))
+                : null}
+            </select>
+          </>
+        ))}
       </div>
       <label>Product Description</label>
       <textarea
